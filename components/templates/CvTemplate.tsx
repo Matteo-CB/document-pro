@@ -21,6 +21,7 @@ export default function CvTemplate({ data, style }: TemplateProps) {
     title,
     email,
     phone,
+    address, // CORRECTION: Récupération de l'adresse
     summary,
     experience,
     education,
@@ -104,7 +105,8 @@ export default function CvTemplate({ data, style }: TemplateProps) {
               <div className="p-2 rounded-lg bg-white/5 text-primary shadow-sm shrink-0">
                 <MapPin size={14} />
               </div>
-              <span className="text-left">Ville, Pays</span>
+              {/* CORRECTION: Affichage dynamique de l'adresse */}
+              <span className="text-left">{address || "Ville, Pays"}</span>
             </div>
           </div>
         </div>

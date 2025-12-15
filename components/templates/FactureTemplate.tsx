@@ -11,6 +11,7 @@ interface TemplateProps {
 export default function FactureTemplate({ data, style }: TemplateProps) {
   const {
     clientName,
+    clientAddress,
     invoiceNumber,
     invoiceDate,
     dueDate,
@@ -50,7 +51,7 @@ export default function FactureTemplate({ data, style }: TemplateProps) {
 
   return (
     <div
-      className="p-8 text-gray-800 h-full flex flex-col justify-between min-h-[297mm]"
+      className="p-12 text-gray-800 h-full flex flex-col justify-between min-h-[297mm]"
       style={{
         backgroundColor: style.documentBgColor || "#ffffff",
         color: style.secondaryColor,
@@ -60,7 +61,7 @@ export default function FactureTemplate({ data, style }: TemplateProps) {
     >
       <header>
         <div
-          className="flex justify-between items-start border-b pb-4 mb-6"
+          className="flex justify-between items-start border-b pb-6 mb-8"
           style={{ borderBottom: `4px solid ${style.primaryColor}` }}
         >
           <div className="w-1/2">
@@ -69,142 +70,129 @@ export default function FactureTemplate({ data, style }: TemplateProps) {
                 src={style.logoUrl}
                 alt="Logo de l'entreprise"
                 width={150}
-                height={50}
-                className="max-h-20 w-auto object-contain mb-2"
+                height={60}
+                className="max-h-24 w-auto object-contain mb-4"
                 unoptimized
               />
             )}
             <p
-              className="font-bold text-base"
+              className="font-bold text-lg"
               style={{ color: style.secondaryColor }}
             >
-              {companyName || "NOM DE L'ENTREPRISE"}
+              {companyName || "VOTRE ENTREPRISE"}
             </p>
-            <p className="text-xs">
-              {companyAddress || "Adresse complète de l'entreprise"}
+            <p className="text-sm whitespace-pre-line opacity-80">
+              {companyAddress || "Adresse complète..."}
             </p>
-            <p className="text-xs">
+            <p className="text-xs mt-2 font-mono text-gray-500">
               SIRET: {companySiret || "000 000 000 00000"}
             </p>
           </div>
           <div className="text-right">
             <h1
-              className="text-3xl font-extrabold mb-1"
+              className="text-4xl font-extrabold mb-2 tracking-tight"
               style={{ color: style.primaryColor }}
             >
               FACTURE
             </h1>
-            <p className="font-bold text-sm">
-              N°:{" "}
+            <p className="font-bold text-base">
+              N°{" "}
               <span style={{ color: style.primaryColor }}>
-                {invoiceNumber || "FAC-XXXX"}
+                {invoiceNumber || "FAC-2024-001"}
               </span>
             </p>
-            <p className="text-sm">Date d'Émission: {formattedInvoiceDate}</p>
-            <p className="text-sm font-semibold">
-              Échéance: {formattedDueDate}
-            </p>
+            <div className="mt-2 text-sm opacity-80">
+              <p>Date : {formattedInvoiceDate}</p>
+              <p>Échéance : {formattedDueDate}</p>
+            </div>
           </div>
         </div>
-        <div className="flex justify-end mb-8">
+
+        <div className="flex justify-end mb-12">
           <div
-            className="w-1/2 p-4 rounded-lg border-l-4"
+            className="w-1/2 p-6 rounded-r-lg border-l-4 bg-gray-50"
             style={{
               borderLeftColor: style.primaryColor,
-              backgroundColor: style.accentColor + "20",
             }}
           >
             <p
-              className="font-semibold text-sm mb-1"
+              className="font-bold text-xs uppercase tracking-wider mb-2"
               style={{ color: style.primaryColor }}
             >
-              Client:
+              Facturé à :
             </p>
-            <p className="font-bold">{clientName || "Nom du Client"}</p>
-            <p className="text-sm whitespace-pre-line">
-              {data.clientAddress || "Adresse du client"}
+            <p className="font-bold text-xl mb-1">
+              {clientName || "Nom du Client"}
+            </p>
+            <p className="text-sm whitespace-pre-line opacity-80">
+              {clientAddress || "Adresse du client..."}
             </p>
           </div>
         </div>
       </header>
 
       <section className="flex-grow">
-        <h2
-          className="text-lg font-bold mb-3"
-          style={{ color: style.primaryColor }}
-        >
-          Détails
-        </h2>
-        <div className="border border-gray-300 rounded-lg overflow-hidden mb-8">
+        <div className="border border-gray-200 rounded-lg overflow-hidden mb-8 shadow-sm">
           <div
-            className="flex font-bold text-white text-sm"
+            className="flex font-bold text-white text-sm py-3 px-4"
             style={{ backgroundColor: style.secondaryColor }}
           >
-            <div className="p-2 w-3/5">Désignation</div>
-            <div className="p-2 w-1/5 text-right">Prix HT</div>
-            <div className="p-2 w-1/5 text-right">Prix TTC</div>
+            <div className="w-[60%]">Désignation</div>
+            <div className="w-[20%] text-right">TVA</div>
+            <div className="w-[20%] text-right">Total TTC</div>
           </div>
           {descriptionLines.map((line: string, index: number) => (
             <div
               key={index}
-              className="flex text-sm border-b border-gray-200"
+              className="flex text-sm border-b border-gray-100 py-3 px-4"
               style={{
                 backgroundColor:
-                  index % 2 === 0
-                    ? style.documentBgColor
-                    : style.accentColor + "10",
+                  index % 2 === 0 ? style.documentBgColor : "rgba(0,0,0,0.02)",
               }}
             >
-              <div className="p-2 w-3/5 whitespace-pre-line">{line}</div>
-              <div className="p-2 w-1/5 text-right">
-                {(totalTTCFloat / descriptionLines.length / 1.2).toFixed(2)} €
-              </div>
-              <div className="p-2 w-1/5 text-right">
+              <div className="w-[60%] whitespace-pre-line pr-4">{line}</div>
+              <div className="w-[20%] text-right opacity-60">20%</div>
+              <div className="w-[20%] text-right font-medium">
                 {(totalTTCFloat / descriptionLines.length).toFixed(2)} €
               </div>
             </div>
           ))}
           {descriptionLines.length === 0 && (
-            <div className="flex text-sm border-b border-gray-200">
-              <div className="p-2 w-3/5 text-gray-400">
-                Aucun article facturé
-              </div>
-              <div className="p-2 w-1/5 text-right">0.00 €</div>
-              <div className="p-2 w-1/5 text-right">0.00 €</div>
+            <div className="p-8 text-center text-gray-400 italic text-sm">
+              Aucun article ajouté.
             </div>
           )}
         </div>
+
         <div className="flex justify-end">
-          <div className="w-1/2">
-            <div className="flex justify-between py-1 text-sm">
-              <span>Total HT:</span>
-              <span className="font-semibold">{totalHTFloat} €</span>
+          <div className="w-1/2 space-y-3">
+            <div className="flex justify-between text-sm opacity-80">
+              <span>Total HT</span>
+              <span>{totalHTFloat} €</span>
             </div>
-            <div className="flex justify-between py-1 text-sm border-b">
-              <span>TVA (20%):</span>
-              <span className="font-semibold">{tvaFloat} €</span>
+            <div className="flex justify-between text-sm opacity-80 border-b pb-2">
+              <span>TVA (20%)</span>
+              <span>{tvaFloat} €</span>
             </div>
             <div
-              className="flex justify-between py-2 mt-2 font-bold text-lg text-white p-2 rounded-md"
-              style={{ backgroundColor: style.primaryColor }}
+              className="flex justify-between font-bold text-xl py-2 px-4 rounded"
+              style={{ backgroundColor: style.primaryColor, color: "white" }}
             >
-              <span>TOTAL À PAYER TTC:</span>
+              <span>Net à payer</span>
               <span>{totalTTCFloat.toFixed(2)} €</span>
             </div>
           </div>
         </div>
       </section>
 
-      <footer className="mt-8 pt-4 border-t text-xs opacity-70">
-        <p className="font-semibold" style={{ color: style.primaryColor }}>
-          Conditions de Paiement: {paymentTermsLabel}
-        </p>
+      <footer className="mt-12 pt-6 border-t text-xs text-center opacity-60">
+        <p className="font-semibold mb-1">Conditions : {paymentTermsLabel}</p>
         <p>
           En cas de retard de paiement, une indemnité forfaitaire pour frais de
           recouvrement de 40€ sera due.
         </p>
-        <p className="mt-2 text-center font-medium">
-          {companyName} - SIRET {companySiret}
+        <p className="mt-2">
+          {companyName} • {companyAddress} • SIRET {companySiret}
         </p>
       </footer>
     </div>

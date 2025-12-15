@@ -14,8 +14,12 @@ export default function LettreMotivationTemplate({
   const {
     recipientName,
     recipientTitle,
+    recipientAddress,
     jobTitle,
     senderName,
+    senderAddress,
+    senderEmail,
+    senderPhone,
     senderCity,
     date,
     bodyContent,
@@ -28,7 +32,7 @@ export default function LettreMotivationTemplate({
 
   return (
     <div
-      className="p-12 text-gray-800 h-full flex flex-col justify-between min-h-[297mm]"
+      className="p-16 text-gray-800 h-full flex flex-col min-h-[297mm]"
       style={{
         backgroundColor: style.documentBgColor || "#ffffff",
         color: style.secondaryColor,
@@ -36,58 +40,74 @@ export default function LettreMotivationTemplate({
         fontSize: `${style.fontSize}pt`,
       }}
     >
-      <header className="mb-10">
+      <header className="mb-12">
         <div className="flex justify-between items-start">
           {/* Informations Expéditeur */}
-          <div className="w-1/2 text-sm space-y-1">
-            <p className="font-bold" style={{ color: style.secondaryColor }}>
+          <div className="w-1/2 space-y-1">
+            <p
+              className="font-bold text-lg"
+              style={{ color: style.secondaryColor }}
+            >
               {senderName || "Votre Prénom Nom"}
             </p>
-            {/* Ajout fictif pour la structure si nécessaire */}
-            <p>Adresse de l'expéditeur</p>
-            <p>Email / Téléphone</p>
+            <div className="text-sm opacity-80 whitespace-pre-line">
+              <p>{senderAddress || "Votre Adresse"}</p>
+              <p>{senderEmail || "email@exemple.com"}</p>
+              <p>{senderPhone || "06 00 00 00 00"}</p>
+            </div>
           </div>
 
           {/* Informations Destinataire */}
-          <div className="w-1/2 text-sm text-right space-y-1">
-            <p className="font-semibold" style={{ color: style.primaryColor }}>
-              {recipientName || "Nom du Recruteur"}
+          <div className="w-1/2 text-right space-y-1">
+            <p
+              className="font-bold text-lg"
+              style={{ color: style.primaryColor }}
+            >
+              {recipientName || "Nom du Destinataire"}
             </p>
-            <p>{recipientTitle || "Titre/Poste"}</p>
-            <p>Adresse de l'Entreprise</p>
+            <p className="font-medium">{recipientTitle || "Titre/Poste"}</p>
+            <p className="text-sm opacity-80 whitespace-pre-line">
+              {recipientAddress || "Adresse de l'Entreprise"}
+            </p>
           </div>
         </div>
 
-        <div className="text-sm mt-12 text-left">
-          <p className="mb-2 text-right">
+        <div className="mt-12 text-right">
+          <p className="text-sm italic">
             {senderCity || "Ville"}, le {formattedDate}
           </p>
-          <div className="mt-8">
-            <p className="font-bold mb-4" style={{ color: style.primaryColor }}>
-              Objet: Candidature au poste de {jobTitle || "Intitulé du Poste"}
-            </p>
-            <p>Madame, Monsieur,</p>
-          </div>
+        </div>
+
+        <div
+          className="mt-8 border-b pb-4"
+          style={{ borderColor: style.primaryColor }}
+        >
+          <p
+            className="font-bold text-lg"
+            style={{ color: style.primaryColor }}
+          >
+            Objet : Candidature au poste de {jobTitle || "..."}
+          </p>
         </div>
       </header>
 
-      <section className="flex-grow text-sm whitespace-pre-line leading-relaxed mb-8 text-justify">
+      <section className="flex-grow text-justify leading-relaxed whitespace-pre-wrap">
         {bodyContent ||
-          "Rédigez ici le corps de votre lettre de motivation, en structurant vos idées en paragraphes pour une lecture facile. Mettez en avant vos compétences et votre intérêt pour l'entreprise."}
+          "Monsieur, Madame,\n\n[Votre lettre de motivation ici...]"}
       </section>
 
-      <footer>
-        <p className="text-sm mb-12 whitespace-pre-line">
+      <footer className="mt-12">
+        <p className="mb-12 whitespace-pre-line">
           {closingFormula ||
             "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées."}
         </p>
         <div className="flex justify-end">
-          <div className="text-center min-w-[150px]">
+          <div className="text-center min-w-[200px]">
             <p
-              className="text-sm font-bold mb-8"
+              className="font-bold mb-8"
               style={{ color: style.secondaryColor }}
             >
-              {senderName || "Votre Signature"}
+              {senderName}
             </p>
             {/* Espace pour signature manuscrite */}
           </div>
