@@ -104,9 +104,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
-        <GoogleAnalytics
-          gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS || ""}
-        />
+        <GoogleAnalytics gaId={"G-B34BZR4K7W"} />
       </body>
     </html>
   );
