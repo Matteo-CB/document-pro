@@ -19,38 +19,32 @@ export default function DocumentViewer({
   documentName,
 }: DocumentViewerProps) {
   const { state, dispatch } = useDocument();
-  const documentRef = useRef<HTMLDivElement>(null);
+
+  // Ref pour l'aperçu visible (zoomé)
+  const previewRef = useRef<HTMLDivElement>(null);
+  // Ref pour le rendu PDF invisible (échelle 100% parfaite)
+  const printRef = useRef<HTMLDivElement>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [isReady, setIsReady] = useState(false);
 
-  // Moteur de Scaling Intelligent
+  // Moteur de Scaling Intelligent pour l'aperçu
   useEffect(() => {
     const calculateScale = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        // Largeur standard A4 en pixels à 96 DPI (~794px)
-        const a4Width = 794;
-
-        // Sur mobile, on veut utiliser presque toute la largeur
-        // Sur PC, on garde un peu de marge
+        const a4Width = 794; // Largeur A4 px @ 96 DPI
         const padding = containerWidth < 800 ? 20 : 40;
-
-        // On calcule le ratio pour que ça rentre dans l'écran
         const newScale = Math.min((containerWidth - padding) / a4Width, 1);
-
-        // On évite que ça devienne microscopique, mais on laisse descendre assez bas pour mobile
         setScale(newScale > 0.3 ? newScale : 0.3);
         setIsReady(true);
       }
     };
 
-    // Recalcul initial + event listener
     calculateScale();
     const resizeObserver = new ResizeObserver(() => calculateScale());
     if (containerRef.current) resizeObserver.observe(containerRef.current);
-
-    // Écouteur resize fenêtre classique en backup
     window.addEventListener("resize", calculateScale);
 
     return () => {
@@ -60,22 +54,33 @@ export default function DocumentViewer({
   }, []);
 
   const generatePDF = async () => {
-    if (!documentRef.current || state.isGenerating) return;
+    // On cible l'élément caché "printRef" qui est toujours parfait (pas de zoom)
+    if (!printRef.current || state.isGenerating) return;
 
     dispatch({ type: "SET_GENERATING", payload: true });
 
     try {
-      const element = documentRef.current;
-
-      const canvas = await html2canvas(element, {
-        scale: 2, // Haute qualité (Retina)
-        useCORS: true,
+      // 1. Capture haute fidélité
+      const canvas = await html2canvas(printRef.current, {
+        scale: 3, // Échelle x3 pour une netteté impeccable
+        useCORS: true, // Pour charger les images externes/locales
+        allowTaint: true,
         logging: false,
         backgroundColor: "#ffffff",
-        windowWidth: 794, // Force la largeur pour le rendu canvas
+        width: 794, // Force les dimensions exactes A4
+        height: 1123,
+        windowWidth: 794,
+        windowHeight: 1123,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
       });
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
+      // 2. Conversion en Image (PNG pour éviter les artefacts JPEG)
+      const imgData = canvas.toDataURL("image/png");
+
+      // 3. Génération PDF
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
@@ -85,11 +90,18 @@ export default function DocumentViewer({
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${documentType}-${new Date().toISOString().slice(0, 10)}.pdf`);
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+      // Nom du fichier propre
+      const cleanName = documentName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+      pdf.save(
+        `${documentType}_${cleanName}_${new Date()
+          .toISOString()
+          .slice(0, 10)}.pdf`
+      );
     } catch (error) {
       console.error("Erreur PDF:", error);
-      alert("Erreur lors de la génération. Veuillez réessayer.");
+      alert("Erreur lors de la génération du PDF. Veuillez réessayer.");
     } finally {
       dispatch({ type: "SET_GENERATING", payload: false });
     }
@@ -97,6 +109,32 @@ export default function DocumentViewer({
 
   return (
     <div className="flex flex-col h-full relative bg-gray-100/50">
+      {/* --- ZONE CACHÉE : RENDU PARFAIT POUR LE PDF --- */}
+      {/* Positionné hors écran mais présent dans le DOM pour html2canvas */}
+      <div
+        className="fixed top-0 left-0 overflow-hidden pointer-events-none opacity-0 z-[-1]"
+        style={{ left: "-9999px" }} // Hors champ
+      >
+        <div
+          ref={printRef}
+          style={{
+            width: "794px",
+            height: "1123px",
+            backgroundColor: "white",
+            fontFamily: state.style.fontFamily,
+            fontSize: `${state.style.fontSize}pt`,
+          }}
+        >
+          {/* Version clonée pour l'impression uniquement */}
+          <DocumentTemplate
+            documentType={documentType}
+            data={state.data}
+            style={state.style}
+          />
+        </div>
+      </div>
+      {/* ------------------------------------------------ */}
+
       {/* Barre d'outils Flottante */}
       <div className="absolute top-4 left-4 right-4 z-30 flex justify-between items-center p-2 sm:p-3 bg-white/90 backdrop-blur-md rounded-xl border border-gray-200/50 shadow-lg transition-all hover:shadow-xl">
         <div className="flex items-center gap-3">
@@ -134,37 +172,30 @@ export default function DocumentViewer({
         </button>
       </div>
 
-      {/* Zone de Contenu Scrollable */}
-      {/* Utilisation de items-start pour éviter le centrage vertical forcé qui peut cacher le haut sur petit écran */}
+      {/* Zone de Contenu Scrollable (Aperçu Utilisateur) */}
       <div
         ref={containerRef}
         className="flex-1 w-full flex justify-center overflow-y-auto overflow-x-hidden pt-24 pb-10 px-2 scrollbar-thin"
       >
-        {/* Conteneur A4 Mis à l'échelle */}
-        {/* CORRECTION CRITIQUE MOBILE : 
-            1. min-w-[794px] : Interdit au navigateur de compresser la largeur du div.
-            2. shrink-0 : Interdit à flexbox de réduire l'élément.
-            3. transformOrigin: "top center" : Zoom depuis le haut-milieu.
-        */}
         <div
           className={cn(
             "relative bg-white shadow-2xl transition-opacity duration-500 ease-out shrink-0",
             isReady ? "opacity-100" : "opacity-0"
           )}
           style={{
-            width: "794px", // Largeur fixe A4 stricte
-            minWidth: "794px", // Empêche le rétrécissement CSS
-            maxWidth: "794px", // Empêche l'agrandissement CSS
-            minHeight: "1123px", // Hauteur fixe A4
+            width: "794px",
+            minWidth: "794px",
+            maxWidth: "794px",
+            minHeight: "1123px",
             height: "1123px",
-            transform: `scale(${scale})`, // Zoom CSS
-            transformOrigin: "top center", // Point d'ancrage du zoom
-            marginBottom: `-${(1 - scale) * 1123}px`, // Compensation marge bas
+            transform: `scale(${scale})`,
+            transformOrigin: "top center",
+            marginBottom: `-${(1 - scale) * 1123}px`,
           }}
         >
           <div
-            ref={documentRef}
-            id="document-to-print"
+            ref={previewRef}
+            id="document-preview"
             className="w-full h-full overflow-hidden"
             style={{
               fontFamily: state.style.fontFamily,
