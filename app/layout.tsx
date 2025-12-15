@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -13,7 +14,6 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  // CORRECTION: Nouveau domaine
   metadataBase: new URL("https://document-pro.fr"),
   title: {
     default: "Générateur de Documents Pro Gratuit | Devis, Factures, CV",
@@ -47,27 +47,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    // CORRECTION: Nouveau domaine
     url: "https://document-pro.fr",
     siteName: "Document Pro",
     title: "Générateur de Documents Professionnels Gratuit",
     description:
       "La suite d'outils ultime pour générer vos documents administratifs et commerciaux. Rapide, gratuit et élégant.",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Document Pro - Générateur PDF",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Document Pro",
     description: "Créez vos Devis, CV et Factures en un clic.",
     creator: "@HiddenLab",
-    images: ["/og-image.jpg"],
   },
   alternates: {
     canonical: "./",
@@ -83,7 +73,6 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Document Pro",
-    // CORRECTION: Nouveau domaine
     url: "https://document-pro.fr",
     applicationCategory: "BusinessApplication",
     operatingSystem: "Any",
@@ -102,7 +91,6 @@ export default function RootLayout({
       ],
     },
     featureList: "Génération PDF, Devis, Factures, CV, Lettres, Attestations",
-    screenshot: "https://document-pro.fr/og-image.jpg",
   };
 
   return (
@@ -116,6 +104,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        <GoogleAnalytics
+          gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS || ""}
+        />
       </body>
     </html>
   );
