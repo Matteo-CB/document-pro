@@ -35,13 +35,11 @@ export default function CvTemplate({ data, style }: TemplateProps) {
     fontFamily,
   } = style;
 
-  // Texte riche
   const experienceContent = parseRichText(experience, {
     color: secondaryColor,
   });
   const educationContent = parseRichText(education, { color: secondaryColor });
 
-  // Correction: On s'assure que skills est une string et on type explicitement 's'
   const skillsString = typeof skills === "string" ? skills : "";
   const skillsList = skillsString
     ? skillsString.split("\n").filter((s: string) => s.trim())
@@ -49,8 +47,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
 
   return (
     <div
-      // CORRECTION: Layout 'flex-row' FORCÉ. Pas de 'flex-col' sur mobile.
-      // Le document doit ressembler au PDF final (A4) quel que soit l'écran.
       className="flex flex-row h-full w-full min-h-[297mm] shadow-2xl overflow-hidden"
       style={{
         backgroundColor: documentBgColor || "#ffffff",
@@ -59,7 +55,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
         color: secondaryColor,
       }}
     >
-      {/* SIDEBAR GAUCHE (Fixe 32%) */}
       <aside
         className="w-[32%] p-8 text-white flex flex-col gap-8 relative overflow-hidden shrink-0"
         style={{ backgroundColor: secondaryColor }}
@@ -119,7 +114,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
             Compétences
           </h2>
           <div className="flex flex-wrap gap-2">
-            {/* Correction: Typage explicite des arguments skill et i */}
             {skillsList.map((skill: string, i: number) => (
               <span
                 key={i}
@@ -137,7 +131,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
         </div>
       </aside>
 
-      {/* CONTENU PRINCIPAL DROITE (Fixe 68%) */}
       <main className="w-[68%] p-10 md:p-12 flex flex-col gap-10">
         <header
           className="border-b-2 pb-6"
@@ -157,7 +150,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
           </p>
         </header>
 
-        {/* SECTION PROFIL */}
         <section>
           <div className="flex items-center gap-3 mb-4">
             <div
@@ -183,8 +175,7 @@ export default function CvTemplate({ data, style }: TemplateProps) {
           </div>
         </section>
 
-        {/* SECTION EXPÉRIENCE */}
-        <section className="flex-1">
+        <section>
           <div className="flex items-center gap-3 mb-5">
             <div
               className="p-2 rounded-md text-white shadow-md transform -rotate-2"
@@ -213,7 +204,6 @@ export default function CvTemplate({ data, style }: TemplateProps) {
           </div>
         </section>
 
-        {/* SECTION FORMATION */}
         <section>
           <div className="flex items-center gap-3 mb-5">
             <div
