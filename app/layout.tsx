@@ -104,7 +104,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
-        <GoogleAnalytics gaId={"G-B34BZR4K7W"} />
+        <GoogleAnalytics gaId="G-B34BZR4K7W" />
+
+        {/* CORRECTION : Chargement manuel optimisé de Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9989627034003305"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

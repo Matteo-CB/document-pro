@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { formatTitle, slugify } from "@/lib/utils";
 import { Metadata } from "next";
+import AdUnit from "@/components/ui/AdUnit"; // IMPORT
 
 const iconMap: Record<string, any> = {
   FileText,
@@ -71,7 +72,7 @@ export default function HomePage() {
           </span>
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl z-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl z-20 mb-12">
           {AvailableDocuments.map((doc, idx) => {
             const IconComponent = iconMap[doc.icon] || FileText;
             const href = `/generate/${slugify(doc.name)}-${doc.id}`;
@@ -114,7 +115,13 @@ export default function HomePage() {
           })}
         </div>
 
-        <div className="animate-fade-in-up [animation-delay:800ms] mt-24 flex flex-wrap justify-center gap-8 md:gap-16 text-gray-400 border-t border-gray-100 pt-12 w-full max-w-4xl transform-gpu will-change-transform">
+        {/* --- ESPACE PUB OPTIMISÉ --- */}
+        <div className="w-full max-w-4xl z-20 animate-fade-in-up [animation-delay:600ms]">
+          <AdUnit slot="1234567890" format="horizontal" />
+        </div>
+        {/* --------------------------- */}
+
+        <div className="animate-fade-in-up [animation-delay:800ms] mt-12 flex flex-wrap justify-center gap-8 md:gap-16 text-gray-400 border-t border-gray-100 pt-12 w-full max-w-4xl transform-gpu will-change-transform">
           <div className="flex items-center gap-3">
             <ShieldCheck size={24} className="text-primary" />
             <div className="flex flex-col">
