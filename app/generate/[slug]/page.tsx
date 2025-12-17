@@ -130,9 +130,9 @@ export default function GeneratePage({ params }: GeneratePageProps) {
               <DocumentForm documentType={documentType} />
 
               {/* PUB EN BAS DE FORMULAIRE - Placement non intrusif */}
-              <div className="mt-12">
+              {/* <div className="mt-12">
                 <AdUnit slot="9876543210" format="horizontal" />
-              </div>
+              </div> */}
             </div>
           </main>
         </div>
