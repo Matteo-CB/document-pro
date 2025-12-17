@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "./",
   },
-  other: {
-    "google-adsense-account": "ca-pub-9989627034003305",
-  },
+  // other: {
+  //   "google-adsense-account": "ca-pub-9989627034003305",
+  // },
 };
 
 export default function RootLayout({
@@ -109,13 +109,13 @@ export default function RootLayout({
         {children}
         <GoogleAnalytics gaId="G-B34BZR4K7W" />
 
-        {/* CORRECTION : Chargement manuel optimisé de Google AdSense */}
+        {/* CORRECTION : Chargement manuel optimisé de Google AdSense
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9989627034003305"
           crossOrigin="anonymous"
           strategy="afterInteractive"
-        />
+        /> */}
       </body>
     </html>
   );
