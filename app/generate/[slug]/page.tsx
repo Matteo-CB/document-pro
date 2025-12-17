@@ -77,9 +77,9 @@ export default function GeneratePage({ params }: GeneratePageProps) {
             <StylePanel />
 
             {/* PUB DANS LA SIDEBAR (Bas) - Ne gêne pas la navigation */}
-            <div className="mt-8 pt-6 border-t border-gray-100">
+            {/* <div className="mt-8 pt-6 border-t border-gray-100">
               <AdUnit slot="0000000000" format="rectangle" label="Partenaire" />
-            </div>
+            </div> */}
           </div>
         </aside>
 

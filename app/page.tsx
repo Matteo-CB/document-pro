@@ -116,9 +116,9 @@ export default function HomePage() {
         </div>
 
         {/* --- ESPACE PUB OPTIMISÉ --- */}
-        <div className="w-full max-w-4xl z-20 animate-fade-in-up [animation-delay:600ms]">
+        {/* <div className="w-full max-w-4xl z-20 animate-fade-in-up [animation-delay:600ms]">
           <AdUnit slot="1234567890" format="horizontal" />
-        </div>
+        </div> */}
         {/* --------------------------- */}
 
         <div className="animate-fade-in-up [animation-delay:800ms] mt-12 flex flex-wrap justify-center gap-8 md:gap-16 text-gray-400 border-t border-gray-100 pt-12 w-full max-w-4xl transform-gpu will-change-transform">
